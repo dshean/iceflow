@@ -4,3 +4,6 @@
 [submodule "demcoreg"]
 	path = demcoreg
 	url = ./demcoreg/
+[submodule "georaster"]
+	path = georaster
+	url = ./georaster/
