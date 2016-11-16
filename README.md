@@ -2,5 +2,8 @@
 All the things
 
 ## Submodules
-You can run to get demcoreg and georaster
-`git submodule update --init`
+Everything should be setup on a mac if you run
+
+`make`
+
+but I haven't tested on Windows
