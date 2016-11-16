@@ -23,11 +23,11 @@ import scipy.interpolate
 #from scikits import umfpack
 from scipy.ndimage.interpolation import map_coordinates
 
-from lib import iolib
-from lib import malib
-from lib import timelib 
-from lib import geolib
-from lib import pltlib
+from pygeotools.lib import iolib
+from pygeotools.lib import malib
+from pygeotools.lib import timelib 
+from pygeotools.lib import geolib
+from pygeotools.lib import pltlib
 
 #This does the interpolation for a particular time for all points defined by x and y coords
 #Used for parallel interpolation
