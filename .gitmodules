@@ -1,0 +1,6 @@
+[submodule "pygeotools"]
+	path = pygeotools
+	url = ./pygeotools/
+[submodule "demcoreg"]
+	path = demcoreg
+	url = ./demcoreg/
