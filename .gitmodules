@@ -6,4 +6,4 @@
 	url = https://github.com/dshean/demcoreg/
 [submodule "georaster"]
 	path = georaster
-	url = https://github.com/atedstone/georaster 
+	url = https://github.com/dlilien/georaster/
