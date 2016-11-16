@@ -27,7 +27,6 @@ from pygeotools.lib import iolib
 from pygeotools.lib import malib
 from pygeotools.lib import timelib 
 from pygeotools.lib import geolib
-from pygeotools.lib import pltlib
 
 #This does the interpolation for a particular time for all points defined by x and y coords
 #Used for parallel interpolation
@@ -95,17 +94,17 @@ def main():
         test = test[:,::stride,::stride]
         test_ptp = test_ptp[::stride,::stride]
         res *= stride 
-        print "Using a stride of %i (%0.1f m)" % (stride, res)
+        print("Using a stride of %i (%0.1f m)" % (stride, res))
         gt[[1,5]] *= stride
 
-    print "Orig shape: ", test.shape
+    print("Orig shape: ", test.shape)
     #Check to make sure all t have valid data
     tcount = test.reshape(test.shape[0], test.shape[1]*test.shape[2]).count(axis=1)
     validt_idx = (tcount > 0).nonzero()[0]
     test = test[validt_idx]
     test_source = test_source[validt_idx]
     t = t[validt_idx]
-    print "New shape: ", test.shape
+    print("New shape: ", test.shape)
 
     y, x = (test.count(axis=0) > 1).nonzero()
     x = x.astype(int)
@@ -169,9 +168,9 @@ def main():
 
     #Attempt to load cached interpolation function 
     int_fn = '%s_LinearNDint_%i_%i.pck' % (os.path.splitext(stack_fn)[0], test.shape[1], test.shape[2]) 
-    print int_fn
+    print(int_fn)
     if load_existing and os.path.exists(int_fn):
-        print "Loading pickled interpolation function: %s" % int_fn
+        print("Loading pickled interpolation function: %s" % int_fn)
         f = open(int_fn, 'rb')
         linNDint = pickle.load(f)
     else:
@@ -179,21 +178,21 @@ def main():
         #print "Running NearestND interpolation for %i points" % X.size
         #NearNDint = scipy.interpolate.NearestNDInterpolator(pts, VM, rescale=True)
         #LinearND interpolation
-        print "Running LinearND interpolation for %i points" % X.size
+        print("Running LinearND interpolation for %i points" % X.size)
         #Note: this breaks qhull for lots of input points
         linNDint = scipy.interpolate.LinearNDInterpolator(pts, VM, rescale=False)
-        print "Saving pickled interpolation function: %s" % int_fn
+        print("Saving pickled interpolation function: %s" % int_fn)
         f = open(int_fn, 'wb')
         pickle.dump(linNDint, f, protocol=2)
         f.close()
 
     vmi_fn = '%s_%iday.npy' % (os.path.splitext(int_fn)[0], ti_dt)
     if load_existing and os.path.exists(vmi_fn):
-        print 'Loading existing interpolated stack: %s' % vmi_fn
+        print('Loading existing interpolated stack: %s' % vmi_fn)
         vmi_ma = np.ma.fix_invalid(np.load(vmi_fn)['arr_0'])
     else:
         #Once tesselation is complete, sample each timestep in parallel
-        print "Sampling %i points at %i timesteps, %i total" % (x.size, ti.size, x.size*ti.size)
+        print("Sampling %i points at %i timesteps, %i total" % (x.size, ti.size, x.size*ti.size))
         #Prepare array to hold output
         vmi_ma = np.ma.masked_all((ti.size, test.shape[1], test.shape[2]))
         """
@@ -212,16 +211,16 @@ def main():
         results.sort()
         for n, r in enumerate(results):
             t_rescale = r[0]*t_scale + t_offset
-            print n, t_rescale, timelib.o2dt(t_rescale)
+            print(n, t_rescale, timelib.o2dt(t_rescale))
             vmi_ma[n,y,x] = r[1]
 
         vmi_ma = np.ma.fix_invalid(vmi_ma)
-        print 'Saving interpolated stack: %s' % vmi_fn
+        print('Saving interpolated stack: %s' % vmi_fn)
         np.save(vmi_fn, vmi_ma.filled(np.nan))
 
     origt = False 
     if origt:
-        print "Sampling %i points at %i original timesteps" % (x.size, t.size)
+        print("Sampling %i points at %i original timesteps" % (x.size, t.size))
         vmi_ma_origt = np.ma.masked_all((t.size, test.shape[1], test.shape[2]))
         #Parallel
         pool = mp.Pool(processes=None)
@@ -229,7 +228,7 @@ def main():
         results = [p.get() for p in results]
         results.sort()
         for n, r in enumerate(results):
-            print n, r[0], timelib.o2dt(r[0])
+            print(n, r[0], timelib.o2dt(r[0]))
             vmi_ma_origt[n,y,x] = r[1]
         vmi_ma_origt = np.ma.fix_invalid(vmi_ma_origt)
         #print 'Saving interpolated stack: %s' % vmi_fn

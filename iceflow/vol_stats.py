@@ -53,7 +53,7 @@ def main():
         bma = np.ma.array(bma, mask=mask)
 
     #Print out stats
-    print
+    print('\n')
     stats = malib.print_stats(bma)
 
     count = stats[0]
@@ -67,24 +67,22 @@ def main():
     s_gt = s_km3*rho
     s_mm = s_gt/374
 
-    print
     if dt_yr is not None:
-        print "%s to %s: %0.2f yr" % (ts[0], ts[1], dt_yr)
-        print "%0.0f m^3 (%0.0f m^3/yr)" % (s_m3, s_m3/dt_yr)
-        print "%0.3f km^3 (%0.3f km^3/yr)" % (s_km3, s_km3/dt_yr)
-        print "Density: %0.3f g/cc" % rho
-        print "%0.3f GT (%0.3f GT/yr)" % (s_gt, s_gt/dt_yr)
-        print "%0.6f mm SLR (%0.6f mm/yr)" % (s_mm, s_mm/dt_yr)
-        print "%0.3f m.w.e. (%0.3f m.w.e./yr)" % (s_mwe, s_mwe/dt_yr)
+        print("%s to %s: %0.2f yr" % (ts[0], ts[1], dt_yr))
+        print("%0.0f m^3 (%0.0f m^3/yr)" % (s_m3, s_m3/dt_yr))
+        print("%0.3f km^3 (%0.3f km^3/yr)" % (s_km3, s_km3/dt_yr))
+        print("Density: %0.3f g/cc" % rho)
+        print("%0.3f GT (%0.3f GT/yr)" % (s_gt, s_gt/dt_yr))
+        print("%0.6f mm SLR (%0.6f mm/yr)" % (s_mm, s_mm/dt_yr))
+        print("%0.3f m.w.e. (%0.3f m.w.e./yr)" % (s_mwe, s_mwe/dt_yr))
     else:
-        print "Area: %0.2f km2" % (area/1E6)
-        print "%0.0f m^3" % s_m3
-        print "%0.3f km^3" % s_km3 
-        print "Density: %0.3f g/cc" % rho
-        print "%0.3f GT" % s_gt
-        print "%0.6f mm SLR" % s_mm
-        print "%0.3f m.w.e." % s_mwe
-    print
+        print("Area: %0.2f km2" % (area/1E6))
+        print("%0.0f m^3" % s_m3)
+        print("%0.3f km^3" % s_km3) 
+        print("Density: %0.3f g/cc" % rho)
+        print("%0.3f GT" % s_gt)
+        print("%0.6f mm SLR" % s_mm)
+        print("%0.3f m.w.e." % s_mwe)
 
 if __name__ == "__main__":
     main()
