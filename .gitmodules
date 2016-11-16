@@ -3,7 +3,7 @@
 	url = ./pygeotools/
 [submodule "demcoreg"]
 	path = demcoreg
-	url = ./demcoreg/
+	url = https://github.com/dshean/demcoreg/
 [submodule "georaster"]
 	path = georaster
-	url = ./georaster/
+	url = https://github.com/atedstone/georaster 
