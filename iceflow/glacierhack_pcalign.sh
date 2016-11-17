@@ -15,14 +15,11 @@ max_displacement=1000
 #Number of iterations
 num_itt=2000
 
-#ref_dem='AST14DEM_00310232003045929_20161116155805_13266.tif'
 ref_dem=$1
 
-#source_dem='AST14DEM_00311102004045819_20161116155805_13272.tif'
 source_dem=$2
 
 #pc_align output prefix
-#output='AST14DEM_00311102004045819_20161116155805_13272_align'
 output=${source_dem%.*}_align
 
 #echo 'create mask'
