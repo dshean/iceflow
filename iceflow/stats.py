@@ -60,25 +60,12 @@ def mynewfunc(*blocks):
     applied = numpy.apply_along_axis(myfunc, 2, stacked_array)
     return applied
 
-timesteps = numpy.ma.array(timesteps, mask=(timesteps == -1))
 def mynewfunc_reshape(*blocks):
     stacked_array = numpy.dstack(blocks)
-    print stacked_array.shape
     new_shape = (stacked_array.shape[0]*stacked_array.shape[1], 4)
     reshaped = numpy.swapaxes(numpy.reshape(stacked_array, new_shape), 0, 1)
-    print reshaped.shape
-    tiled = numpy.tile(timesteps, reshaped.shape[0])
-    print tiled.shape
-    print (reshaped.shape[0], len(timesteps))
-    tiled_timesteps = numpy.reshape(tiled, (reshaped.shape[0], len(timesteps)))
-    #regression = numpy.polyfit(tiled_timesteps[valid_mask],
-    #                           reshaped[valid_mask], 1)
-    print timesteps.shape, reshaped.shape
-    print timesteps
     regression = numpy.polyfit(timesteps,
                                reshaped, 1)[0]
-    print regression
-    print regression.shape
     out_block = regression.reshape(blocks[0].shape)
     return numpy.where(numpy.min(stacked_array, axis=2) == 0, 0, out_block)
 
