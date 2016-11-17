@@ -21,6 +21,11 @@ Everything should be setup on a mac (not tested on Windows) if you run
 `make`
 in your repo directory.
 
+## Updates ##
+If things change in submodules, you need to pull those changes too, so it is best if you always use
 
+`git pull --recurse-submodulues`
+
+so that you get all changes with the pull.
 
 
