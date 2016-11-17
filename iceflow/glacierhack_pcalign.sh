@@ -16,7 +16,6 @@ max_displacement=1000
 num_itt=2000
 
 ref_dem=$1
-
 source_dem=$2
 
 #pc_align output prefix
