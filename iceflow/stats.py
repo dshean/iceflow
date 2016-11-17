@@ -63,20 +63,26 @@ def mynewfunc(*blocks):
 def mynewfunc_reshape(*blocks):
     stacked_array = numpy.dstack(blocks)
     print stacked_array.shape
-    reshaped = numpy.reshape(stacked_array, -1)
+    new_shape = (stacked_array.shape[0]*stacked_array.shape[1], 4)
+    reshaped = numpy.swapaxes(numpy.reshape(stacked_array, new_shape), 0, 1)
     print reshaped.shape
     tiled = numpy.tile(timesteps, reshaped.shape[0])
     print tiled.shape
-    tiled_timesteps = numpy.reshape(tiled, reshaped.shape[1])
-    print tiled_timesteps
+    print (reshaped.shape[0], len(timesteps))
+    tiled_timesteps = numpy.reshape(tiled, (reshaped.shape[0], len(timesteps)))
     valid_mask = reshaped == 0
-    regression = numpy.polyfit(tiled_timesteps[valid_mask],
-                               reshaped[valid_mask], 1)
+    #regression = numpy.polyfit(tiled_timesteps[valid_mask],
+    #                           reshaped[valid_mask], 1)
+    print timesteps.shape, reshaped.shape
+    regression = numpy.polyfit(timesteps,
+                               reshaped, 1)[0]
+    print regression
+    print regression.shape
     return regression.reshape(blocks[0].shape)
 
 pygeoprocessing.vectorize_datasets(
     dataset_uri_list=rasters,
-    dataset_pixel_op=mynewfunc,
+    dataset_pixel_op=mynewfunc_reshape,
     dataset_out_uri='newfile.tif',
     datatype_out=gdal.GDT_Float32,
     nodata_out=0,
