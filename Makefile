@@ -9,6 +9,7 @@ all:
 	pip install -e demcoreg/
 	pip install -e pygeotools/
 	pip install -e geoutils/
+	pip install -e georaster/
 
 # vim:ft=make
 #
