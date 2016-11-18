@@ -13,9 +13,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Personal libraries
-import geovector as vect
+from geoutils import geovector as vect
+from geoutils.demraster import DEMRaster
 import georaster as raster
-from demraster import DEMRaster
+
 
 
 def compute_mass_balance(dhfile,shapefile,dt,nodata=-9999,area_thresh=2,ice_density=0.85,SLA=None,snow_density=None,demfile=None,plot=False,backgrdfile=None):
