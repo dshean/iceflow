@@ -1,17 +1,17 @@
-# TODO: Add a page on what we did to the wiki.
-
 import argparse
 import sys
 import os
 import glob
 import datetime
 import logging
-logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger('iceflow.regression')
 
 import numpy
 from osgeo import gdal
 import pygeoprocessing
+
+logging.basicConfig(level=logging.INFO)
+LOGGER = logging.getLogger('iceflow.regression')
+
 
 def _date_from_filename(filename):
     """Read in a datetime object from a Worldview raster filename.
@@ -160,13 +160,16 @@ def make_regression(worldview_folder, out_filename, deg=1, weights=None):
         out_block = regression.reshape(blocks[0].shape)
         return numpy.where(numpy.min(stacked_array, axis=2) == 0, 0, out_block)
 
+    out_cell_size = min(pygeoprocessing.get_cell_size_from_uri(r)
+                        for r in rasters)
+
     pygeoprocessing.vectorize_datasets(
         dataset_uri_list=rasters,
         dataset_pixel_op=_regression,
         dataset_out_uri=out_filename,
         datatype_out=gdal.GDT_Float32,
         nodata_out=0,
-        pixel_size_out=32.,
+        pixel_size_out=out_cell_size,
         bounding_box_mode='intersection',
         vectorize_op=False,
         datasets_are_pre_aligned=False)
