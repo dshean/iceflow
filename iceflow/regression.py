@@ -1,4 +1,3 @@
-# TODO: Dump comments about what I did.
 # TODO: Add a page on what we did to the wiki.
 # TODO: Add order, weights to polyfit
 
@@ -91,7 +90,7 @@ def _compare_with_make_stack(stack_trend_file, pgp_trend_file, diff_file):
         datasets_are_pre_aligned=False)
 
 
-def make_regression(worldview_folder, out_filename):
+def make_regression(worldview_folder, out_filename, deg=1):
     """Calculate a regression between worldview DEMs within a folder.
 
     Note:
@@ -109,6 +108,9 @@ def make_regression(worldview_folder, out_filename):
         out_filename (string): The path on disk to where the regression raster
             should be stored.  If the file already exists on disk, it will be
             overwritten.
+        deg=1 (int): The order of the regression.  Passed directly to
+            ``numpy.polyfit`` via the ``deg`` parameter.  1 represents
+            linear regression.
 
     Returns:
         ``None``"""
@@ -142,7 +144,7 @@ def make_regression(worldview_folder, out_filename):
                      len(timesteps))
         reshaped = numpy.swapaxes(numpy.reshape(stacked_array, new_shape), 0, 1)
         regression = numpy.polyfit(timesteps,
-                                   reshaped, 1)[0]
+                                   reshaped, deg=deg)[0]
         out_block = regression.reshape(blocks[0].shape)
         return numpy.where(numpy.min(stacked_array, axis=2) == 0, 0, out_block)
 
