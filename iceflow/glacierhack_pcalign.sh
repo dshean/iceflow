@@ -2,6 +2,10 @@
 
 #basic pc_align workflow
 
+#check for correct number of input parameters
+# if not correct, exit before running all other code
+# and give message about what needs to be input
+
 if [ "$#" -ne 2 ] ; then
     echo "Usage is $0 ref_dem.tif src_dem.tif"
     echo "ref_dem.tif is the reference elevation data"
@@ -9,19 +13,21 @@ if [ "$#" -ne 2 ] ; then
     exit 1
 fi
 
-#Max displacement
+#Max displacement sets max inital error. helps to reduce wasted itterations
 max_displacement=1000
 
-#Number of iterations
+#max number of iterations for pc_align to use.
 num_itt=2000
 
+#attach command line arguments to variables for use.
 ref_dem=$1
 source_dem=$2
 
 #pc_align output prefix
 output=${source_dem%.*}_align
 
-#echo 'create mask'
+# generate bare earth mask for co-registration
+# not implemented due to time constraints of geohack
 #dem_mask.py $ref_dem
 #echo 'masked reference'
 #ref_dem=${ref_dem%.*}_masked.tif
@@ -30,10 +36,8 @@ output=${source_dem%.*}_align
 pc_align_opt="--max-displacement $max_displacement"
 pc_align_opt+=" --num-iterations $num_itt"
 pc_align_opt+=" --compute-translation-only"
-#This writes out an updated ASP pointcloud that can later be interpolated with point2dem
-#We are going to shortcut using apply_dem_translation.py below
-#pc_align_opt+=" --save-transformed-source-points"
 
+# runs pc align and generates log file with translation parameters
 echo; echo "Running pc_align"
 log_fn=${output%.*}.log
 pc_align $pc_align_opt $ref_dem $source_dem -o $output | tee $log_fn

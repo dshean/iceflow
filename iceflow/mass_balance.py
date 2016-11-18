@@ -4,6 +4,11 @@
 """
 Description: Compute glacier mass balance from a dhdt raster and a shapefile containing glaciers outlines.
 
+Things to improve:
+- keep only polygons that are fully in the raster extent
+- add an option to read SLA in a shapefile
+- save the results in a text file or in the shapefile
+
 Author: Amaury Dehecq
 Date: 17/11/2016
 """
@@ -13,9 +18,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Personal libraries
-import geovector as vect
+from geoutils import geovector as vect
+from geoutils.demraster import DEMRaster
 import georaster as raster
-from demraster import DEMRaster
+
 
 
 def compute_mass_balance(dhfile,shapefile,dt,nodata=-9999,area_thresh=2,ice_density=0.85,SLA=None,snow_density=None,demfile=None,plot=False,backgrdfile=None):
@@ -50,7 +56,7 @@ def compute_mass_balance(dhfile,shapefile,dt,nodata=-9999,area_thresh=2,ice_dens
     # Plot
     if plot==True:
         print "First plot"
-        vmax = max(np.abs(np.nanmin(dh_obj.r[dh_obj.r!=nodata])),np.abs(np.nanmax(dh_obj.r[dh_obj.r!=nodata])))
+        vmax = max(np.abs(np.percentile(dh_obj.r[dh_obj.r!=nodata],5)),np.abs(np.percentile(dh_obj.r[dh_obj.r!=nodata],95)))
         plt.imshow(np.ma.array(dh_obj.r,mask=np.where(dh_obj.r==nodata,True,False)),vmin=-vmax,vmax=vmax,cmap=plt.get_cmap('RdBu'),interpolation='nearest',extent=dh_obj.extent)
         outlines.draw(facecolor='none')
         cb = plt.colorbar()
