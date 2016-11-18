@@ -1,5 +1,13 @@
 #! /usr/bin/env python
 
+#Python wrapper for ASP pc_align 
+#Will run co-registration for all input filenames
+
+import os
+import sys
+import argparse
+import subprocess
+
 #TODO: better error handling, throw/catch exceptions at each stage
 
 #Run ASP's dem_mosaic tool to create a mosaic
@@ -44,7 +52,7 @@ def run_pc_align(ref_fn, src_fn, cleanup=False, **kwargs):
     log_fn = os.path.split(src_fn)[0]+'.log'
     cmd = ['glacierhack_pcalign.sh', ref_fn, src_fn]
     cmd.extend(kwargs)
-    cmd.extend(['|', 'tee', log_fn]
+    #cmd.extend(['|', 'tee', log_fn]
     print(cmd)
     subprocess.call(cmd)
     #Note: the glacierhack_pcalign.sh script writes log file from pc_align using tee
@@ -77,5 +85,18 @@ def pc_align_all(fn_list, ref_fn=None):
         if fn == ref_fn:
             out_fn_list.append(fn)
         else:
-            run_pc_align(ref_fn, fn)
+            out_fn = run_pc_align(ref_fn, fn)
+            out_fn_list.append(out_fn)
     return out_fn_list
+
+def main():
+    parser = argparse.ArgumentParser(description="Clip input raster by input shp polygons")
+    parser.add_argument('-ref_fn', type=str, default=None, help="Refernce filename. If not provided, will use weigted mean of all inputs as reference.")
+    parser.add_argument('fn_list', nargs='+', help='Input DEM filenames [dem1.tif dem2.tif ...]')
+    args = parser.parse_args()
+    
+    #Run the full co-registration
+    out_fn_list = pc_align_all(args.fn_list, args.ref_fn)
+
+if __name__ == "__main__":
+    main()
