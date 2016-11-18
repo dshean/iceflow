@@ -173,6 +173,15 @@ def make_regression(worldview_folder, out_filename, deg=1, weights=None):
 
 
 def main(args=None):
+    """Provide an argparse interface to ``regression.py``.
+
+    Parameters:
+        args=None(list of options or None): If None, ``sys.argv[1:]`` will
+            be used instead.
+
+    Returns:
+        ``None``
+    """
     if not args:
         args = sys.argv[1:]
 
