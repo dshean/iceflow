@@ -90,7 +90,7 @@ def _compare_with_make_stack(stack_trend_file, pgp_trend_file, diff_file):
         datasets_are_pre_aligned=False)
 
 
-def make_regression(worldview_folder, out_filename, deg=1):
+def make_regression(worldview_folder, out_filename, deg=1, weights=None):
     """Calculate a regression between worldview DEMs within a folder.
 
     Note:
@@ -111,6 +111,14 @@ def make_regression(worldview_folder, out_filename, deg=1):
         deg=1 (int): The order of the regression.  Passed directly to
             ``numpy.polyfit`` via the ``deg`` parameter.  1 represents
             linear regression.
+        weights=None (``numpy.ndarray`` or ``None``): If None, the inputs will
+            be unweighted in the regression.  If an ``ndarray``, this array
+            must a 1D array with the same length as there are files in
+            ``worldview_folder``.
+
+    Raises:
+        ``ValueError``: When the length of ``weights`` does not equal
+            the number of geotiffs found in ``worldview_folder``.
 
     Returns:
         ``None``"""
@@ -121,6 +129,10 @@ def make_regression(worldview_folder, out_filename, deg=1):
     timesteps = [_date_from_filename(r) for r in rasters]
     timesteps = numpy.array([(d - timesteps[0]).days for d in timesteps])
     LOGGER.info('Timesteps: %s' % timesteps)
+
+    if weights and not (len(weights) == len(timesteps)):
+        raise ValueError(('Weights length (%s) does not match timesteps '
+                          'length (%s)') % (len(weights), len(timesteps)))
 
     def _regression(*blocks):
         """Compute linear regression from a stack of DEM matrices.
@@ -144,7 +156,7 @@ def make_regression(worldview_folder, out_filename, deg=1):
                      len(timesteps))
         reshaped = numpy.swapaxes(numpy.reshape(stacked_array, new_shape), 0, 1)
         regression = numpy.polyfit(timesteps,
-                                   reshaped, deg=deg)[0]
+                                   reshaped, deg=deg, w=weights)[0]
         out_block = regression.reshape(blocks[0].shape)
         return numpy.where(numpy.min(stacked_array, axis=2) == 0, 0, out_block)
 
