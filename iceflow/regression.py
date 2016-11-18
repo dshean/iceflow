@@ -1,7 +1,7 @@
 # TODO: Add a page on what we did to the wiki.
-# TODO: Add order, weights to polyfit
 
-
+import argparse
+import sys
 import os
 import glob
 import datetime
@@ -172,5 +172,33 @@ def make_regression(worldview_folder, out_filename, deg=1, weights=None):
         datasets_are_pre_aligned=False)
 
 
+def main(args=None):
+    if not args:
+        args = sys.argv[1:]
+
+    # def make_regression(worldview_folder, out_filename, deg=1, weights=None):
+    parser = argparse.ArgumentParser(
+        description='Calculate regression from WorldView DEMs.')
+    parser.add_argument('dem_dir', nargs=1, help='Directory of worldview DEMs.')
+    parser.add_argument('out_filename', nargs=1,
+                        help='Where to save the output file.')
+    parser.add_argument('--degree', '-d', nargs='?', default=1, type=int,
+                        help='Degree of the polynomial function to fit.')
+    parser.add_argument('--weights', '-w', nargs='*', default=None, type=int,
+                        metavar='WEIGHT',
+                        help=('Weights to use.  Must match the number of '
+                              'worldview DEMs.'))
+    parsed_args = parser.parse_args(args)
+
+    print parsed_args
+    return
+
+    make_regression(
+        worldview_folder=parsed_args.dem_dir,
+        out_filename=parsed_args.out_filename,
+        deg=parsed_args.degree,
+        weights=parsed_args.weights)
+
+
 if __name__ == '__main__':
-    make_regression('data', 'regression.tif')
+    main()
