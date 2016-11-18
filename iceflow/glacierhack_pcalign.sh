@@ -1,11 +1,13 @@
 #! /bin/bash
 
-#basic pc_align workflow
+#Wrapper for Ames Stereo Pipeline (ASP) pc_align command line utility
+#Used to co-register two input point clouds or DEMs
 
-#check for correct number of input parameters
-# if not correct, exit before running all other code
-# and give message about what needs to be input
+#Requires that ASP has been installed and executables are in PATH
+#See ASP website for precompiled binaries and official documentation: 
+#https://ti.arc.nasa.gov/tech/asr/intelligent-robotics/ngt/stereo/
 
+#Parse command line arguments
 if [ "$#" -ne 2 ] ; then
     echo "Usage is $0 ref_dem.tif src_dem.tif"
     echo "ref_dem.tif is the reference elevation data"
