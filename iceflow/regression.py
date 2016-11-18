@@ -4,6 +4,7 @@ import sys
 import datetime
 import logging
 logging.basicConfig(level=logging.INFO)
+LOGGER = logging.getLogger('iceflow.regression')
 
 import numpy
 from osgeo import gdal
@@ -21,9 +22,11 @@ def _date_from_filename(filename):
 def make_regression(worldview_folder, out_filename):
     rasters = sorted(glob.glob(worldview_folder + '/*.tif'),
                      key=lambda x: int(os.path.basename(x).split('_')[0]))
+    LOGGER.info('Using rasters %s', rasters)
 
     timesteps = [_date_from_filename(r) for r in rasters]
     timesteps = numpy.array([(d - timesteps[0]).days for d in timesteps])
+    LOGGER.info('Timesteps: %s' % timesteps)
 
     def _regression(*blocks):
         stacked_array = numpy.dstack(blocks)
@@ -43,7 +46,7 @@ def make_regression(worldview_folder, out_filename):
         pixel_size_out=32.,
         bounding_box_mode='intersection',
         vectorize_op=False,
-        datasets_are_pre_aligned=True)
+        datasets_are_pre_aligned=False)
 
 if __name__ == '__main__':
     make_regression('data', 'regression.tif')
