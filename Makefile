@@ -7,6 +7,7 @@ all:
 	git submodule update --init
 	pip install -e demcoreg/
 	pip install -e pygeotools/
+	pip install -e geoutils/
 
 # vim:ft=make
 #
