@@ -1,5 +1,11 @@
 #basic pc_align workflow
 
+# wrapper for applying log file translation to dem without reprojecting
+
+#usage is 
+
+#apply_dem_translation.py dem.tif trans.log 
+
 
 apply_dem_translation.py 20141018_0511_1050410011888400_1050410011888300-DEM_32m.tif 20141018_0511_1050410011888400_1050410011888300-DEM_2m_align.log 
 
