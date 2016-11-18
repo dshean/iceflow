@@ -84,7 +84,6 @@ def writeout(dst_fn, ds):
     #dst_ds = driver.Create(dst_fn, ovr_b.XSize, ovr_b.YSize, 1, ovr_b.DataType, options=opt)
     del dst_ds
 
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('fn', help='Filename of raster to inpaint')
