@@ -1,3 +1,4 @@
+import warnings
 import argparse
 import sys
 import os
@@ -122,6 +123,9 @@ def make_regression(worldview_folder, out_filename, deg=1, weights=None):
 
     Returns:
         ``None``"""
+    if not os.path.exists(worldview_folder):
+        raise IOError('Folder %s not found' % worldview_folder)
+
     rasters = sorted(glob.glob(worldview_folder + '/*.tif'),
                      key=lambda x: int(os.path.basename(x).split('_')[0]))
     LOGGER.info('Using rasters %s', rasters)
@@ -160,8 +164,13 @@ def make_regression(worldview_folder, out_filename, deg=1, weights=None):
         out_block = regression.reshape(blocks[0].shape)
         return numpy.where(numpy.min(stacked_array, axis=2) == 0, 0, out_block)
 
-    out_cell_size = min(pygeoprocessing.get_cell_size_from_uri(r)
-                        for r in rasters)
+    raster_cell_sizes = [pygeoprocessing.get_cell_size_from_uri(r)
+                         for r in rasters]
+    min_cell_size = min(raster_cell_sizes)
+    if not len(set(raster_cell_sizes)) == 1:
+        warnings.warn(('Cell sizes of input rasters do not all match. '
+                       'Using min pixelsize of %s. Mismatched values: %s') % (
+                      min_cell_size, set(raster_cell_sizes)))
 
     pygeoprocessing.vectorize_datasets(
         dataset_uri_list=rasters,
@@ -169,7 +178,7 @@ def make_regression(worldview_folder, out_filename, deg=1, weights=None):
         dataset_out_uri=out_filename,
         datatype_out=gdal.GDT_Float32,
         nodata_out=0,
-        pixel_size_out=out_cell_size,
+        pixel_size_out=min_cell_size,
         bounding_box_mode='intersection',
         vectorize_op=False,
         datasets_are_pre_aligned=False)
@@ -191,8 +200,8 @@ def main(args=None):
     # def make_regression(worldview_folder, out_filename, deg=1, weights=None):
     parser = argparse.ArgumentParser(
         description='Calculate regression from WorldView DEMs.')
-    parser.add_argument('dem_dir', nargs=1, help='Directory of worldview DEMs.')
-    parser.add_argument('out_filename', nargs=1,
+    parser.add_argument('dem_dir', help='Directory of worldview DEMs.')
+    parser.add_argument('out_filename',
                         help='Where to save the output file.')
     parser.add_argument('--degree', '-d', nargs='?', default=1, type=int,
                         help='Degree of the polynomial function to fit.')
@@ -201,9 +210,6 @@ def main(args=None):
                         help=('Weights to use.  Must match the number of '
                               'worldview DEMs.'))
     parsed_args = parser.parse_args(args)
-
-    print parsed_args
-    return
 
     make_regression(
         worldview_folder=parsed_args.dem_dir,
