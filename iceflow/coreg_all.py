@@ -19,13 +19,11 @@ def run_dem_mosaic(fn_list, mos_fn=None, stat=None):
     if os.path.exists(mos_fn):
         #Should ask to overwrite
         n = 1
-        ok = False
-        while not ok:
-            if '_%i.tif' % n in mos_fn:
-                n += 1
-            else:
-                ok = True
-        mos_fn = os.path.splitext(mos_fn)[0]+'_%i.tif' % n
+        mos_fn_base = os.path.splitext(mos_fn)[0]
+        mos_fn = mos_fn_base+'_%i.tif' % n
+        while os.path.exists(mos_fn):
+            n += 1
+            mos_fn = mos_fn_base+'_%i.tif' % n
     outprefix = os.path.splitext(mos_fn)[0]
     cmd = ['dem_mosaic', '-o', outprefix]
     #first, last, min, max, mean, stddev, median, count
@@ -35,8 +33,9 @@ def run_dem_mosaic(fn_list, mos_fn=None, stat=None):
         statflag = '--stddev'
     else:
         #Use default weigthed mean
-        statflag = ''
-    cmd.append(statflag)
+        statflag = None 
+    if statflag:
+        cmd.append(statflag)
     cmd.extend(fn_list)
     print(cmd)
     subprocess.call(cmd)
@@ -50,7 +49,9 @@ def run_pc_align(ref_fn, src_fn, cleanup=False, **kwargs):
     #Default output name
     out_fn = os.path.splitext(src_fn)[0]+'_trans.tif'
     log_fn = os.path.split(src_fn)[0]+'.log'
-    cmd = ['glacierhack_pcalign.sh', ref_fn, src_fn]
+    script = 'glacierhack_pcalign.sh'
+    script = os.path.join(os.path.dirname(os.path.realpath(__file__)), script)
+    cmd = [script, ref_fn, src_fn]
     cmd.extend(kwargs)
     #cmd.extend(['|', 'tee', log_fn]
     print(cmd)
@@ -81,6 +82,7 @@ def pc_align_all(fn_list, ref_fn=None):
     if not os.path.exists(ref_fn):
         #Should be better about throwing exceptions here
         sys.exit("Unable to find specified reference file: %s" % ref_fn)
+    out_fn_list = []
     for fn in fn_list:
         if fn == ref_fn:
             out_fn_list.append(fn)

@@ -4,6 +4,8 @@
 #Used to co-register two input point clouds or DEMs
 
 #Requires that ASP has been installed and executables are in PATH
+#Also requires pygeotools apply_dem_translation.py is executable and in PATH
+
 #See ASP website for precompiled binaries and official documentation: 
 #https://ti.arc.nasa.gov/tech/asr/intelligent-robotics/ngt/stereo/
 
@@ -44,5 +46,6 @@ echo; echo "Running pc_align"
 log_fn=${output%.*}.log
 pc_align $pc_align_opt $ref_dem $source_dem -o $output | tee $log_fn
 
+#Apply the horizontal translation to input DEM geotransform, remove vertical offset
 echo; echo "Applying DEM translation"
 apply_dem_translation.py $source_dem $log_fn 
