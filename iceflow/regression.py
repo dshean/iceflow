@@ -162,7 +162,9 @@ def make_regression(worldview_folder, out_filename, deg=1, weights=None):
         regression = numpy.polyfit(timesteps,
                                    reshaped, deg=deg, w=weights)[0]
         out_block = regression.reshape(blocks[0].shape)
-        return numpy.where(numpy.min(stacked_array, axis=2) == 0, 0, out_block)
+        # Mask out any pixel stacks where there's a nodata value in the stack.
+        # Out block is multiplied by 365.25 to convert m/day to m/year trend.
+        return numpy.where(numpy.min(stacked_array, axis=2) == 0, 0, out_block*365.25)
 
     raster_cell_sizes = [pygeoprocessing.get_cell_size_from_uri(r)
                          for r in rasters]
