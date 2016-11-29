@@ -56,12 +56,19 @@ def main():
     parser.add_argument('shp_fn', type=str, help='Input shp filename')
     args = parser.parse_args()
 
-    #from demcoreg.dem_mask import get_glacier_poly
-    #rgi_fn = get_glacier_poly() 
-    #shp_fn = rgi_fn
-
     r_fn = args.r_fn
+    if not os.path.exists(args.r_fn):
+        sys.exit("Unable to find r_fn: %s" % r_fn)
+        
     shp_fn = args.shp_fn
+    if shp_fn == 'RGI' or shp_fn == 'rgi':
+        from demcoreg.dem_mask import get_glacier_poly
+        rgi_fn = get_glacier_poly() 
+        shp_fn = rgi_fn
+
+    if not os.path.exists(shp_fn):
+        sys.exit("Unable to find shp_fn: %s" % shp_fn)
+
     extent=args.extent
 
     #Do the clipping
